@@ -10,7 +10,7 @@ import {
   Settings,
   Moon,
 } from "lucide-react";
-import { Logo } from "./Logo";
+import { Logo } from "../Logo";
 import { useMood } from "@/hooks/use-mood";
 import { MOODS } from "@/data/moods";
 
