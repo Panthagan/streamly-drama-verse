@@ -190,11 +190,14 @@ const DramaDetail = () => {
               {data.credits.cast.slice(0, 12).map((c) => (
                 <div key={c.id} className="w-28 shrink-0">
                   <div className="aspect-[2/3] overflow-hidden rounded-xl bg-card ring-1 ring-border">
-                    {c.profile_path ? (
-                      <img src={TMDB_IMG(c.profile_path, "w300") ?? ""} alt={c.name} loading="lazy" className="h-full w-full object-cover" />
-                    ) : (
-                      <div className="flex h-full w-full items-center justify-center text-2xl">🎭</div>
-                    )}
+                    <SafeImage
+                      src={TMDB_IMG(c.profile_path, "w300")}
+                      alt={c.name}
+                      loading="lazy"
+                      className="h-full w-full object-cover"
+                      fallbackClassName="flex h-full w-full items-center justify-center text-2xl bg-gradient-to-br from-primary/20 to-secondary/20"
+                      fallbackLabel="🎭"
+                    />
                   </div>
                   <div className="mt-2 text-xs font-semibold leading-tight">{c.name}</div>
                   <div className="text-[10px] text-muted-foreground">{c.character}</div>
@@ -214,28 +217,19 @@ const DramaDetail = () => {
           ) : (
             <div className="space-y-2">
               {epsQuery.data?.episodes?.slice(0, 12).map((ep) => (
-                <div key={ep.id} className="flex gap-3 rounded-xl border border-border bg-card p-3 hover:border-primary/40 transition-smooth">
-                  <div className="h-16 w-28 shrink-0 overflow-hidden rounded-md bg-muted">
-                    {ep.still_path ? (
-                      <img src={TMDB_IMG(ep.still_path, "w300") ?? ""} alt="" loading="lazy" className="h-full w-full object-cover" />
-                    ) : (
-                      <div className="h-full w-full bg-gradient-to-br from-primary/30 to-secondary/30" />
-                    )}
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                      EP {ep.episode_number} · {ep.air_date || "TBA"}
-                    </div>
-                    <div className="truncate font-semibold">{ep.name}</div>
-                    <div className="line-clamp-1 text-xs text-muted-foreground">{ep.overview || "No description."}</div>
-                  </div>
-                  <div className="shrink-0 self-center text-[11px] text-muted-foreground">
-                    Discussions soon
-                  </div>
-                </div>
+                <EpisodeRow key={ep.id} ep={ep} dramaId={dramaId} seasonNum={seasonNum} />
               ))}
             </div>
           )}
+        </section>
+
+        {/* Drama-level discussion */}
+        <section className="mt-12">
+          <CommentThread
+            threadId={`drama:${dramaId}`}
+            title={`${data.name} — Overall Discussion`}
+            emptyHint="Share your thoughts on the whole drama. No major spoilers without the toggle. 💜"
+          />
         </section>
 
         {/* Similar */}
@@ -244,13 +238,57 @@ const DramaDetail = () => {
             <DramaRow title="Similar Dramas" emoji="✨" shows={data.similar.results.slice(0, 12)} />
           </div>
         )}
-
-        {/* User reviews placeholder */}
-        <section className="mt-12 mb-8 rounded-2xl border border-dashed border-border bg-card/40 p-8 text-center">
-          <div className="text-sm text-muted-foreground">User reviews & community discussions arrive with the Community update.</div>
-          <div className="mt-1 text-xs text-muted-foreground/70">Coming soon.</div>
-        </section>
       </div>
+    </div>
+  );
+};
+
+/* ----- Episode row with collapsible discussion ----- */
+const EpisodeRow = ({
+  ep, dramaId, seasonNum,
+}: {
+  ep: { id: number; episode_number: number; season_number?: number; name: string; overview: string; air_date: string; still_path: string | null };
+  dramaId: number;
+  seasonNum: number;
+}) => {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="rounded-xl border border-border bg-card transition-smooth hover:border-primary/40">
+      <button
+        onClick={() => setOpen((v) => !v)}
+        className="flex w-full items-center gap-3 p-3 text-left"
+      >
+        <div className="h-16 w-28 shrink-0 overflow-hidden rounded-md bg-muted">
+          <SafeImage
+            src={TMDB_IMG(ep.still_path, "w300")}
+            alt=""
+            loading="lazy"
+            className="h-full w-full object-cover"
+            fallbackClassName="h-full w-full bg-gradient-to-br from-primary/30 to-secondary/30"
+            fallbackLabel=""
+          />
+        </div>
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            EP {ep.episode_number} · {ep.air_date || "TBA"}
+          </div>
+          <div className="truncate font-semibold">{ep.name}</div>
+          <div className="line-clamp-1 text-xs text-muted-foreground">{ep.overview || "No description."}</div>
+        </div>
+        <div className="shrink-0 self-center text-[11px] font-semibold text-primary-glow">
+          {open ? "Hide ▲" : "Discuss ▼"}
+        </div>
+      </button>
+      {open && (
+        <div className="border-t border-border/60 p-3 sm:p-4 animate-fade-in">
+          <CommentThread
+            threadId={`ep:${dramaId}:${seasonNum}:${ep.episode_number}`}
+            title={`EP ${ep.episode_number} Discussion`}
+            spoilerByDefault
+            emptyHint="First reaction to this episode? Spoilers are blurred by default."
+          />
+        </div>
+      )}
     </div>
   );
 };
