@@ -73,6 +73,16 @@ export const newThisMonth = () => {
   });
 };
 
+// Japanese anime — TMDB animation genre (16) with JP origin
+export const japaneseAnime = () =>
+  tmdb<TMDBPagedResult<TMDBShow>>("/discover/tv", {
+    with_origin_country: "JP",
+    with_genres: "16",
+    "vote_count.gte": 100,
+    sort_by: "popularity.desc",
+    page: 1,
+  });
+
 export const allTimeClassics = () =>
   tmdb<TMDBPagedResult<TMDBShow>>("/discover/tv", {
     with_origin_country: "KR|CN|JP|TW|TH",

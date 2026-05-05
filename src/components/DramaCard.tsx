@@ -1,6 +1,7 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Play, Star } from "lucide-react";
 import { TMDB_IMG, getCountryFromShow, COUNTRY_INFO, inferTropes } from "@/lib/tmdb";
+import { SafeImage } from "@/components/SafeImage";
 import type { TMDBShow } from "@/lib/tmdb-types";
 
 interface Props {
@@ -10,6 +11,7 @@ interface Props {
 }
 
 export const DramaCard = ({ show, index = 0, size = "default" }: Props) => {
+  const navigate = useNavigate();
   const country = getCountryFromShow(show);
   const tropes = inferTropes(show, [], 2);
   const year = show.first_air_date?.slice(0, 4) || "—";
@@ -24,18 +26,13 @@ export const DramaCard = ({ show, index = 0, size = "default" }: Props) => {
       style={{ animationDelay: `${Math.min(index, 10) * 60}ms` }}
     >
       <div className="relative aspect-[2/3] overflow-hidden rounded-xl bg-card card-shadow ring-1 ring-border/50">
-        {poster ? (
-          <img
-            src={poster}
-            alt={show.name}
-            loading="lazy"
-            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.04]"
-          />
-        ) : (
-          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-primary/30 via-card to-secondary/30 text-center text-xs font-semibold text-foreground/80 p-3">
-            {show.name}
-          </div>
-        )}
+        <SafeImage
+          src={poster}
+          alt={show.name}
+          loading="lazy"
+          fallbackLabel={show.name}
+          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.04]"
+        />
 
         {/* badges */}
         <div className="pointer-events-none absolute left-2 top-2 flex flex-col gap-1.5">
@@ -65,7 +62,21 @@ export const DramaCard = ({ show, index = 0, size = "default" }: Props) => {
           {tropes.map((t) => (
             <span
               key={t.id}
-              className="rounded-full border border-border bg-card/80 px-1.5 py-0.5 text-[10px] text-muted-foreground"
+              role="link"
+              tabIndex={0}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                navigate(`/tropes/${t.id}`);
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  navigate(`/tropes/${t.id}`);
+                }
+              }}
+              className="cursor-pointer rounded-full border border-border bg-card/80 px-1.5 py-0.5 text-[10px] text-muted-foreground hover:border-primary/40 hover:text-primary-glow transition-smooth"
             >
               {t.emoji} {t.label}
             </span>
