@@ -81,11 +81,15 @@ const DramaDetail = () => {
         <div className="grid grid-cols-1 gap-8 md:grid-cols-[200px_1fr] lg:grid-cols-[260px_1fr]">
           {/* Poster */}
           <div className="mx-auto md:mx-0 w-44 md:w-full overflow-hidden rounded-2xl card-shadow ring-1 ring-border">
-            {data.poster_path ? (
-              <img src={TMDB_IMG(data.poster_path, "w500") ?? ""} alt={data.name} className="aspect-[2/3] w-full object-cover" />
-            ) : (
-              <div className="aspect-[2/3] w-full bg-gradient-to-br from-primary/30 to-secondary/30" />
-            )}
+            <div className="aspect-[2/3] w-full">
+              <SafeImage
+                src={TMDB_IMG(data.poster_path, "w500")}
+                alt={data.name}
+                className="h-full w-full object-cover"
+                fallbackLabel={data.name}
+                fallbackClassName="h-full w-full flex items-center justify-center bg-gradient-to-br from-primary/30 via-card to-secondary/30 text-center text-sm font-semibold p-4"
+              />
+            </div>
           </div>
 
           {/* Info */}
