@@ -12,6 +12,8 @@ import {
   pacingLabel,
 } from "@/lib/tmdb";
 import { DramaRow } from "@/components/DramaRow";
+import { SafeImage } from "@/components/SafeImage";
+import { CommentThread } from "@/components/CommentThread";
 import type { TMDBShowDetail } from "@/lib/tmdb-types";
 
 const STREAMING = [
@@ -63,11 +65,12 @@ const DramaDetail = () => {
     <div className="animate-fade-in">
       {/* Backdrop */}
       <div className="relative h-[44vh] min-h-[320px] w-full overflow-hidden">
-        {data.backdrop_path ? (
-          <img src={TMDB_IMG(data.backdrop_path, "original") ?? ""} alt="" className="h-full w-full object-cover blur-sm scale-110 opacity-60" />
-        ) : (
-          <div className="h-full w-full bg-gradient-to-br from-primary/30 to-secondary/30" />
-        )}
+        <SafeImage
+          src={TMDB_IMG(data.backdrop_path, "original")}
+          alt=""
+          className="h-full w-full object-cover blur-sm scale-110 opacity-60"
+          fallbackClassName="h-full w-full bg-gradient-to-br from-primary/30 to-secondary/30"
+        />
         <div className="absolute inset-0 bg-gradient-hero-overlay" />
         <Link to="/" className="absolute left-4 top-4 z-10 flex items-center gap-2 rounded-full bg-background/60 px-3 py-2 text-sm backdrop-blur hover:bg-background/80 transition-smooth">
           <ArrowLeft className="h-4 w-4" /> Back
