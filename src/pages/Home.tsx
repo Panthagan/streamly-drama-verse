@@ -7,6 +7,7 @@ import {
   discoverByCountry,
   newThisMonth,
   allTimeClassics,
+  japaneseAnime,
   showHasTrope,
 } from "@/lib/tmdb";
 import { useMood } from "@/hooks/use-mood";
@@ -36,6 +37,7 @@ const Home = () => {
   });
   const classics = useDramaList("classics", allTimeClassics);
   const newest = useDramaList("new-month", newThisMonth);
+  const anime = useDramaList("anime-jp", japaneseAnime);
 
   // Mood filter — soft filter using inferred tropes
   const applyMood = (list: TMDBShow[] | undefined): TMDBShow[] | undefined => {
@@ -61,6 +63,7 @@ const Home = () => {
       <DramaRow title="Trending K-Dramas" emoji="🔥" shows={applyMood(trending.data)} loading={trending.isLoading} />
       <DramaRow title="Top C-Dramas" emoji="🐉" shows={applyMood(cdrama.data)} loading={cdrama.isLoading} />
       <DramaRow title="Top J-Dramas" emoji="🌸" shows={applyMood(jdrama.data)} loading={jdrama.isLoading} />
+      <DramaRow title="Japanese Anime" emoji="🎌" shows={applyMood(anime.data)} loading={anime.isLoading} />
       <DramaRow title="Thai & Taiwanese Dramas" emoji="🌏" shows={applyMood(thai.data)} loading={thai.isLoading} />
       <DramaRow title="All-Time Classics" emoji="⭐" shows={applyMood(classics.data)} loading={classics.isLoading} />
       <DramaRow title="New This Month" emoji="🆕" shows={applyMood(newest.data)} loading={newest.isLoading} />
