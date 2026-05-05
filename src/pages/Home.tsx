@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { Hero } from "@/components/Hero";
-import { MoodFilter } from "@/components/MoodFilter";
+import { MoodFilter, TropeFilter } from "@/components/MoodFilter";
+import { ActiveFilterBar } from "@/components/ActiveFilterBar";
 import { DramaRow } from "@/components/DramaRow";
 import {
   trendingDramas,
@@ -10,7 +11,7 @@ import {
   japaneseAnime,
   showHasTrope,
 } from "@/lib/tmdb";
-import { useMood } from "@/hooks/use-mood";
+import { useFilters } from "@/hooks/use-filters";
 import { MOODS } from "@/data/moods";
 import type { TMDBShow } from "@/lib/tmdb-types";
 
@@ -22,7 +23,7 @@ const useDramaList = (key: string, fn: () => Promise<{ results: TMDBShow[] }>) =
   });
 
 const Home = () => {
-  const { mood } = useMood();
+  const { mood, trope } = useFilters();
   const moodObj = MOODS.find((m) => m.id === mood) ?? MOODS[0];
 
   const trending = useDramaList("trending-kr", () => trendingDramas("KR"));
@@ -39,15 +40,25 @@ const Home = () => {
   const newest = useDramaList("new-month", newThisMonth);
   const anime = useDramaList("anime-jp", japaneseAnime);
 
-  // Mood filter — soft filter using inferred tropes
-  const applyMood = (list: TMDBShow[] | undefined): TMDBShow[] | undefined => {
+  // Combined mood + trope filter
+  const applyFilters = (list: TMDBShow[] | undefined): TMDBShow[] | undefined => {
     if (!list) return list;
-    if (!moodObj.preferTropes?.length) return list;
-    const filtered = list.filter((s) =>
-      moodObj.preferTropes!.some((t) => showHasTrope(s, t)),
-    );
-    // If filter is too aggressive, fall back to full list (better UX than empty)
-    return filtered.length >= 4 ? filtered : list;
+    let out = list;
+
+    if (trope) {
+      out = out.filter((s) => showHasTrope(s, trope));
+    }
+
+    if (moodObj.preferTropes?.length) {
+      const moodMatched = out.filter((s) =>
+        moodObj.preferTropes!.some((t) => showHasTrope(s, t)),
+      );
+      // If a trope is also active, keep mood as a strict refine; otherwise fall back if too aggressive.
+      if (trope) out = moodMatched;
+      else out = moodMatched.length >= 4 ? moodMatched : out;
+    }
+
+    return out;
   };
 
   const heroShows = trending.data ?? [];
@@ -56,17 +67,19 @@ const Home = () => {
     <div className="space-y-10 pb-10">
       <Hero shows={heroShows} loading={trending.isLoading} />
 
-      <div className="-mt-2">
+      <div className="-mt-2 space-y-2">
         <MoodFilter />
+        <TropeFilter />
+        <ActiveFilterBar />
       </div>
 
-      <DramaRow title="Trending K-Dramas" emoji="🔥" shows={applyMood(trending.data)} loading={trending.isLoading} />
-      <DramaRow title="Top C-Dramas" emoji="🐉" shows={applyMood(cdrama.data)} loading={cdrama.isLoading} />
-      <DramaRow title="Top J-Dramas" emoji="🌸" shows={applyMood(jdrama.data)} loading={jdrama.isLoading} />
-      <DramaRow title="Japanese Anime" emoji="🎌" shows={applyMood(anime.data)} loading={anime.isLoading} />
-      <DramaRow title="Thai & Taiwanese Dramas" emoji="🌏" shows={applyMood(thai.data)} loading={thai.isLoading} />
-      <DramaRow title="All-Time Classics" emoji="⭐" shows={applyMood(classics.data)} loading={classics.isLoading} />
-      <DramaRow title="New This Month" emoji="🆕" shows={applyMood(newest.data)} loading={newest.isLoading} />
+      <DramaRow title="Trending K-Dramas" emoji="🔥" shows={applyFilters(trending.data)} loading={trending.isLoading} />
+      <DramaRow title="Top C-Dramas" emoji="🐉" shows={applyFilters(cdrama.data)} loading={cdrama.isLoading} />
+      <DramaRow title="Top J-Dramas" emoji="🌸" shows={applyFilters(jdrama.data)} loading={jdrama.isLoading} />
+      <DramaRow title="Japanese Anime" emoji="🎌" shows={applyFilters(anime.data)} loading={anime.isLoading} />
+      <DramaRow title="Thai & Taiwanese Dramas" emoji="🌏" shows={applyFilters(thai.data)} loading={thai.isLoading} />
+      <DramaRow title="All-Time Classics" emoji="⭐" shows={applyFilters(classics.data)} loading={classics.isLoading} />
+      <DramaRow title="New This Month" emoji="🆕" shows={applyFilters(newest.data)} loading={newest.isLoading} />
     </div>
   );
 };
