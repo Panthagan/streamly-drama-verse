@@ -9,6 +9,7 @@ import {
   calcBingeHours,
   pacingLabel,
 } from "@/lib/tmdb";
+import { SafeImage } from "@/components/SafeImage";
 import type { TMDBShow } from "@/lib/tmdb-types";
 
 interface Props {
@@ -45,11 +46,12 @@ export const Hero = ({ shows, loading }: Props) => {
             style={{ opacity: i === idx ? 1 : 0 }}
             aria-hidden={i !== idx}
           >
-            {backdrop ? (
-              <img src={backdrop} alt="" className="h-full w-full object-cover object-top" />
-            ) : (
-              <div className="h-full w-full bg-gradient-to-br from-primary/40 to-secondary/40" />
-            )}
+            <SafeImage
+              src={backdrop}
+              alt=""
+              className="h-full w-full object-cover object-top"
+              fallbackClassName="h-full w-full bg-gradient-to-br from-primary/40 to-secondary/40"
+            />
             <div className="absolute inset-0 bg-gradient-hero-overlay" />
             <div className="absolute inset-0 bg-gradient-side-overlay" />
           </div>
