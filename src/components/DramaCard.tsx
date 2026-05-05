@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Play, Star } from "lucide-react";
 import { TMDB_IMG, getCountryFromShow, COUNTRY_INFO, inferTropes } from "@/lib/tmdb";
 import { SafeImage } from "@/components/SafeImage";
@@ -11,6 +11,7 @@ interface Props {
 }
 
 export const DramaCard = ({ show, index = 0, size = "default" }: Props) => {
+  const navigate = useNavigate();
   const country = getCountryFromShow(show);
   const tropes = inferTropes(show, [], 2);
   const year = show.first_air_date?.slice(0, 4) || "—";
@@ -59,14 +60,26 @@ export const DramaCard = ({ show, index = 0, size = "default" }: Props) => {
         <p className="mt-0.5 text-[11px] text-muted-foreground">{year}</p>
         <div className="mt-1.5 flex flex-wrap gap-1">
           {tropes.map((t) => (
-            <Link
+            <span
               key={t.id}
-              to={`/tropes/${t.id}`}
-              onClick={(e) => e.stopPropagation()}
-              className="rounded-full border border-border bg-card/80 px-1.5 py-0.5 text-[10px] text-muted-foreground hover:border-primary/40 hover:text-primary-glow transition-smooth"
+              role="link"
+              tabIndex={0}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                navigate(`/tropes/${t.id}`);
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  navigate(`/tropes/${t.id}`);
+                }
+              }}
+              className="cursor-pointer rounded-full border border-border bg-card/80 px-1.5 py-0.5 text-[10px] text-muted-foreground hover:border-primary/40 hover:text-primary-glow transition-smooth"
             >
               {t.emoji} {t.label}
-            </Link>
+            </span>
           ))}
         </div>
       </div>
