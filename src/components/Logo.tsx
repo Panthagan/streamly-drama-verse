@@ -7,7 +7,7 @@ export const Logo = ({ className = "" }: { className?: string }) => (
       <Play className="h-4 w-4 fill-white text-white" strokeWidth={0} />
     </span>
     <span className="text-xl font-extrabold tracking-tight lowercase">
-      streamly
+      noxora
     </span>
   </Link>
 );

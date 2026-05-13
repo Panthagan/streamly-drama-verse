@@ -13,7 +13,7 @@ const ComingSoon = ({ title, description }: Props) => (
     </div>
     <h1 className="mt-6 text-3xl font-extrabold tracking-tight">{title}</h1>
     <p className="mt-2 max-w-md text-sm text-muted-foreground">
-      {description || "We're cooking this up. Streamly is actively shipping — check back soon."}
+      {description || "We're cooking this up. Noxora is actively shipping — check back soon."}
     </p>
     <Link to="/" className="mt-6 text-sm font-medium text-primary hover:text-primary-glow transition-smooth">
       ← Back to home

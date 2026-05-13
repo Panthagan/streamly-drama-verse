@@ -20,7 +20,7 @@ export interface Comment {
 const REACTION_SET = ["❤️", "😂", "😭", "🔥", "😱", "🤔"];
 
 /* -------------------- Storage helpers -------------------- */
-const storageKey = (threadId: string) => `streamly:comments:${threadId}`;
+const storageKey = (threadId: string) => `noxora:comments:${threadId}`;
 
 const loadThread = (threadId: string): Comment[] => {
   try {
@@ -40,7 +40,7 @@ const saveThread = (threadId: string, comments: Comment[]) => {
 };
 
 const guestName = (): string => {
-  const k = "streamly:guest-name";
+  const k = "noxora:guest-name";
   let v = localStorage.getItem(k);
   if (!v) {
     v = `Drama Fan ${Math.floor(Math.random() * 9000) + 1000}`;
