@@ -3,6 +3,7 @@ import { Hero } from "@/components/Hero";
 import { MoodFilter, TropeFilter } from "@/components/MoodFilter";
 import { ActiveFilterBar } from "@/components/ActiveFilterBar";
 import { DramaRow } from "@/components/DramaRow";
+import { TonightPick } from "@/components/TonightPick";
 import {
   trendingDramas,
   discoverByCountry,
