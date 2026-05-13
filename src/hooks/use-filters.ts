@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 
-const MOOD_KEY = "streamly:mood";
-const TROPE_KEY = "streamly:trope";
-const EVENT = "streamly:filters";
+const MOOD_KEY = "noxora:mood";
+const TROPE_KEY = "noxora:trope";
+const EVENT = "noxora:filters";
 
 interface FiltersState {
   mood: string; // "all" = no mood
