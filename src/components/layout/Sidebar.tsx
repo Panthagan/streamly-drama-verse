@@ -5,6 +5,7 @@ import {
   Sparkles,
   MessageCircle,
   Bookmark,
+  CalendarClock,
   Newspaper,
   User,
   Settings,
@@ -15,24 +16,36 @@ import { useMood } from "@/hooks/use-mood";
 import { MOODS } from "@/data/moods";
 
 const mainItems = [
-  { to: "/", label: "Home", icon: Home },
-  { to: "/discover", label: "Discover", icon: Compass, comingSoon: true },
+  { to: "/home", label: "Home", icon: Home },
+  { to: "/discover", label: "Discover", icon: Compass },
   { to: "/tropes", label: "Tropes", icon: Sparkles, badge: "NEW" },
-  { to: "/community", label: "Community", icon: MessageCircle, comingSoon: true },
+  { to: "/community", label: "Community", icon: MessageCircle },
+  { to: "/watchlist", label: "Watchlist", icon: Bookmark },
+  { to: "/planner", label: "Binge Planner", icon: CalendarClock },
+  { to: "/mood", label: "Mood Check-in", icon: Moon },
 ];
 
 const soonItems = [
-  { to: "/watchlist", label: "Watchlist", icon: Bookmark },
   { to: "/news", label: "News", icon: Newspaper },
   { to: "/profile", label: "My Profile", icon: User },
 ];
 
-export const Sidebar = () => {
+interface SidebarProps {
+  onNavigate?: () => void;
+  variant?: "fixed" | "inline";
+}
+
+export const Sidebar = ({ onNavigate, variant = "fixed" }: SidebarProps) => {
   const { mood } = useMood();
   const moodObj = MOODS.find((m) => m.id === mood) ?? MOODS[0];
 
+  const wrapperClass =
+    variant === "fixed"
+      ? "hidden lg:flex fixed inset-y-0 left-0 z-40 w-64 flex-col border-r border-sidebar-border bg-sidebar"
+      : "flex h-full w-full flex-col bg-sidebar";
+
   return (
-    <aside className="hidden lg:flex fixed inset-y-0 left-0 z-40 w-64 flex-col border-r border-sidebar-border bg-sidebar">
+    <aside className={wrapperClass}>
       <div className="px-6 pt-6 pb-4">
         <Logo />
       </div>
@@ -41,33 +54,25 @@ export const Sidebar = () => {
         <ul className="space-y-1">
           {mainItems.map((item) => (
             <li key={item.to}>
-              {item.comingSoon ? (
-                <div className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-muted-foreground/70 cursor-not-allowed">
-                  <item.icon className="h-4 w-4" />
-                  <span className="flex-1">{item.label}</span>
-                  <span className="text-[10px] uppercase tracking-wider text-muted-foreground/60">soon</span>
-                </div>
-              ) : (
-                <NavLink
-                  to={item.to}
-                  end={item.to === "/"}
-                  className={({ isActive }) =>
-                    `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-smooth ${
-                      isActive
-                        ? "bg-sidebar-accent text-sidebar-accent-foreground shadow-[inset_2px_0_0_hsl(var(--primary))]"
-                        : "text-sidebar-foreground hover:bg-sidebar-accent/60 hover:text-foreground"
-                    }`
-                  }
-                >
-                  <item.icon className="h-4 w-4" />
-                  <span className="flex-1">{item.label}</span>
-                  {item.badge && (
-                    <span className="rounded-full bg-gradient-primary px-2 py-0.5 text-[10px] font-bold tracking-wider text-primary-foreground">
-                      {item.badge}
-                    </span>
-                  )}
-                </NavLink>
-              )}
+              <NavLink
+                to={item.to}
+                onClick={onNavigate}
+                className={({ isActive }) =>
+                  `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-smooth ${
+                    isActive
+                      ? "bg-sidebar-accent text-sidebar-accent-foreground shadow-[inset_2px_0_0_hsl(var(--primary))]"
+                      : "text-sidebar-foreground hover:bg-sidebar-accent/60 hover:text-foreground"
+                  }`
+                }
+              >
+                <item.icon className="h-4 w-4" />
+                <span className="flex-1">{item.label}</span>
+                {item.badge && (
+                  <span className="rounded-full bg-gradient-primary px-2 py-0.5 text-[10px] font-bold tracking-wider text-primary-foreground">
+                    {item.badge}
+                  </span>
+                )}
+              </NavLink>
             </li>
           ))}
         </ul>
@@ -106,12 +111,13 @@ export const Sidebar = () => {
           <span className="mr-1.5 text-xl">{moodObj.emoji}</span>
           {moodObj.label}
         </div>
-        <NavLink to="/" className="mt-3 inline-block text-xs font-medium text-primary hover:text-primary-glow transition-smooth">
-          Find your perfect drama →
+        <NavLink
+          to="/mood"
+          onClick={onNavigate}
+          className="mt-3 inline-block text-xs font-medium text-primary hover:text-primary-glow transition-smooth"
+        >
+          Change tonight's mood →
         </NavLink>
-        <div className="mt-1 text-[11px] text-muted-foreground">
-          <NavLink to="/" className="hover:text-foreground transition-smooth">Change mood</NavLink>
-        </div>
       </div>
     </aside>
   );
