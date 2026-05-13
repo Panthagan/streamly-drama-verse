@@ -31,7 +31,7 @@ export const Header = () => {
           aria-label="Account"
           className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-primary text-sm font-bold text-primary-foreground shadow-glow"
         >
-          ST
+          NX
         </button>
       </header>
       <SearchOverlay open={searchOpen} onOpenChange={setSearchOpen} />
