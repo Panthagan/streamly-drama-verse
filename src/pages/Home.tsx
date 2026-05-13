@@ -3,6 +3,7 @@ import { Hero } from "@/components/Hero";
 import { MoodFilter, TropeFilter } from "@/components/MoodFilter";
 import { ActiveFilterBar } from "@/components/ActiveFilterBar";
 import { DramaRow } from "@/components/DramaRow";
+import { TonightPick } from "@/components/TonightPick";
 import {
   trendingDramas,
   discoverByCountry,
@@ -62,6 +63,8 @@ const Home = () => {
   };
 
   const heroShows = trending.data ?? [];
+  const tonightCandidates = applyFilters(trending.data) ?? [];
+  const tonightPick = tonightCandidates[0];
 
   return (
     <div className="space-y-10 pb-10">
@@ -72,6 +75,8 @@ const Home = () => {
         <TropeFilter />
         <ActiveFilterBar />
       </div>
+
+      <TonightPick show={tonightPick} moodId={mood} />
 
       <DramaRow title="Trending K-Dramas" emoji="🔥" shows={applyFilters(trending.data)} loading={trending.isLoading} />
       <DramaRow title="Top C-Dramas" emoji="🐉" shows={applyFilters(cdrama.data)} loading={cdrama.isLoading} />
