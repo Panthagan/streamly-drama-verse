@@ -4,7 +4,7 @@ export const Footer = () => (
   <footer className="mt-16 border-t border-border/40 px-6 py-8 lg:px-10">
     <div className="mx-auto flex max-w-6xl flex-col items-start gap-4 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
       <p className="leading-relaxed">
-        © {new Date().getFullYear()} Noxora — Where night watchers find their stories.
+        © 2025 Noxora. Powered by TMDB API. <span className="text-muted-foreground/70">Where night watchers find their stories.</span>
       </p>
       <a
         href="https://www.themoviedb.org/"
