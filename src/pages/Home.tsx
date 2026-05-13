@@ -63,6 +63,8 @@ const Home = () => {
   };
 
   const heroShows = trending.data ?? [];
+  const tonightCandidates = applyFilters(trending.data) ?? [];
+  const tonightPick = tonightCandidates[0];
 
   return (
     <div className="space-y-10 pb-10">
@@ -73,6 +75,8 @@ const Home = () => {
         <TropeFilter />
         <ActiveFilterBar />
       </div>
+
+      <TonightPick show={tonightPick} moodId={mood} />
 
       <DramaRow title="Trending K-Dramas" emoji="🔥" shows={applyFilters(trending.data)} loading={trending.isLoading} />
       <DramaRow title="Top C-Dramas" emoji="🐉" shows={applyFilters(cdrama.data)} loading={cdrama.isLoading} />
